@@ -1,12 +1,14 @@
 require 'twitter'
 
-# recursively get pages of 200 tweets until receive an empty response
+# recursively get pages until receive an empty response
 def collect_with_max_id(collection=[], max_id=nil, &block)
   response = yield max_id
-  collection += response
-  response.empty? ? collection.flatten : collect_with_max_id(collection, response.last.id-1, &block)
+  #puts Twitter::SearchResults.methods(false)
+  collection.push(response)
+  response.nil? ? collection.flatten : collect_with_max_id(collection, response.reverse_each.first.id-1, &block)
 end
 
+# ask for 200 tweets recursively until an empty response is returned by collect_with_max method
 def get_all_tweets(cont)
   # provide authorization key/token
   client = Twitter::REST::Client.new do |config|
@@ -17,7 +19,7 @@ def get_all_tweets(cont)
   end
 
   collect_with_max_id do |max_id|
-    options = {:count => 200, :include_rts => true}
+    options = {:count => 200, :include_rts => false}
     options[:max_id] = max_id unless max_id.nil?
     client.search(cont, options).each do |result|
       print_tweet(result)
@@ -26,7 +28,7 @@ def get_all_tweets(cont)
 end
 
 def print_tweet(result)
-  puts result.text
+  puts result.text + "\n"
 end
 
 
