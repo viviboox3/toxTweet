@@ -1,4 +1,6 @@
 require 'twitter'
+require 'rubygems'
+require 'spreadsheet'
 
 # recursively get pages until receive an empty response
 def collect_with_max_id(collection=[], max_id=nil, &block)
@@ -10,6 +12,8 @@ end
 
 # ask for 200 tweets recursively until an empty response is returned by collect_with_max method
 def get_all_tweets(cont)
+  num_attempts = 0
+
   # provide authorization key/token
   client = Twitter::REST::Client.new do |config|
     config.consumer_key = "keJ2l5mveq8uh9eL3zgVQ"
@@ -18,18 +22,39 @@ def get_all_tweets(cont)
     config.access_token_secret = "eUmxAVeX6rD8TLMcKjEFsSFZEu3n2WreqW4nqIUmqOR20"
   end
 
+=begin
+  book = Spreadsheet::Workbook.new
+  sheet1 = book.create_worksheet
+  sheet1.row(0).concat %w{tweet}
+  row = sheet1.row(1)
+=end  
+
   collect_with_max_id do |max_id|
     options = {:count => 200, :include_rts => false}
     options[:max_id] = max_id unless max_id.nil?
-    client.search(cont, options).each do |result|
-      print_tweet(result)
+    begin
+      num_attempts += 1
+      client.search(cont, options).each do |result|
+        print_tweet(result)
+      end
+    rescue Twitter::Error::TooManyRequests => error
+      if num_attempts <= 3
+        sleep error.rate_limit.reset_in
+        retry
+      else
+        raise
+      end
     end
   end
+
+  #book.write 'marijuana-excel.xls'
 end
 
 def print_tweet(result)
-  puts result.text + "\n"
+  $global_counter += 1
+  puts "#$global_counter " + result.text + "\n"
+  #row.push(result.text)
 end
 
-
+$global_counter = 1
 get_all_tweets("marijuana");
