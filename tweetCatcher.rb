@@ -22,20 +22,20 @@ def get_all_tweets(cont)
     config.access_token_secret = "eUmxAVeX6rD8TLMcKjEFsSFZEu3n2WreqW4nqIUmqOR20"
   end
 
-=begin
+
   book = Spreadsheet::Workbook.new
   sheet1 = book.create_worksheet
   sheet1.row(0).concat %w{tweet}
-  row = sheet1.row(1)
-=end  
-
+  
   collect_with_max_id do |max_id|
+    break if $global_counter > 6500
     options = {:count => 200, :include_rts => false}
     options[:max_id] = max_id unless max_id.nil?
     begin
       num_attempts += 1
       client.search(cont, options).each do |result|
-        print_tweet(result)
+        break if $global_counter > 6500
+        print_tweet(result, sheet1.row($global_counter))
       end
     rescue Twitter::Error::TooManyRequests => error
       if num_attempts <= 3
@@ -46,14 +46,16 @@ def get_all_tweets(cont)
       end
     end
   end
+  
+  book.write 'marijuana_tweets.xls'
 
   #book.write 'marijuana-excel.xls'
 end
 
-def print_tweet(result)
+def print_tweet(result, r)
   $global_counter += 1
   puts "#$global_counter " + result.text + "\n"
-  #row.push(result.text)
+  r.push(result.text)
 end
 
 $global_counter = 1
