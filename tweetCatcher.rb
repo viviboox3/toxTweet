@@ -14,6 +14,13 @@ end
 def get_all_tweets(cont)
   num_attempts = 0
 
+  client = Twitter::REST::Client.new do |config|
+    config.consumer_key = "YOUR_CONSUMER_KEY"
+    config.consumer_secret = "YOUR_CONSUMER_SECRET"
+    config.access_token = "YOUR_ACCESS_TOKEN"
+    config.access_token_secret = "YOUR_ACCESS_SECRET"
+  end
+
 
   book = Spreadsheet::Workbook.new
   sheet1 = book.create_worksheet
@@ -21,11 +28,11 @@ def get_all_tweets(cont)
   
   collect_with_max_id do |max_id|
     break if $global_counter > 6500
-    options = {:count => 200, :include_rts => false}
+    options = {:count => 200, :include_rts => false, :lang => "en"}
     options[:max_id] = max_id unless max_id.nil?
     begin
       num_attempts += 1
-      client.search(cont, options).each do |result|
+      client.search(cont,  options).each do |result|
         break if $global_counter > 6500
         print_tweet(result, sheet1.row($global_counter))
       end
@@ -39,9 +46,9 @@ def get_all_tweets(cont)
     end
   end
   
-  book.write 'marijuana_tweets.xls'
+  #book.write 'pot_tweets.xls'
 
-  #book.write 'marijuana-excel.xls'
+  book.write 'marijuana_2_excel.xls'
 end
 
 def print_tweet(result, r)
@@ -51,4 +58,4 @@ def print_tweet(result, r)
 end
 
 $global_counter = 1
-get_all_tweets("marijuana");
+get_all_tweets("marijuana -rt");
