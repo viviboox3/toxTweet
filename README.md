@@ -1,11 +1,37 @@
 ToxTweet
-========
 
-This project uses a naive Bayes classifier to identify what features of tweets are useful for distinguishing discussions on the medical use of marijuana from the those on the recreational use of marijuana.
+## Description
 
-This project has five phases:
-  1. __Data acquisiton and preprocessing__. We will query the Twitter ReST API for content indexed with keywords related to the use of marijuana that has geolocation data. Then, the data will be lemmatized and stopwords removed. No attempt will be made to correct spelling, regularize case, or remove emoticons because these features are likely to be informative in informal communication by providing an information about the writer’s mental or physical state(i.e. frequent spelling mistakes in marijuana related tweets may help us to determine that being under the influence can lead to inability to type correctly).
-  2. __Training of naive Bayes classifier__. Training a classifier entails developing a curated data set. For this project, the curated data set will be 5000 tweets sampled randomly from the continental US . This number ensure sufficient data distribution to the two resulting disjoint subsets, train set and test set. Also, the number can make sure that there exists a Gaussian distribution among data, which is necessary in implementing Naive Bayes. Two people will label the tweets as indicating recreational use, medicinal use, or neither and their agreement quantified by Cohen’s κ.
-  3. __Evaluation__ To evaluate the classifier, we will quantify its precision and recall on a novel curated data set. We will create a confusion matrix and calculate the values for true posi- tive(TP), true negative(TN), false positive(FP), and false negative(FN). Using these metrics, we will plot the ROC curve. We define good prediction to be one with an area under the ROC curve greater than 0.8. It would ensure that our classifier will perform better than a random prediction by 30% more. We will also calculate the lift by first finding the support and confidence for each features in the data set. With the lift, we can determine whether one occurrence of a word is independent from the other or not.
-  4. __Testing and generation of data__. Once tested and evaluated, we will apply the classifier to novel uncurated data. We will periodically also apply the classifier to curated data to make sure that the novel data is similar to those data on which the classifier was trained. We will also check its precision and recall to observe any qualitative changes in the comments from Twitter.
-  5. __Analysis and interpretation__. of data Applying the classifier to data yields point estimates of marijuana usage in a region. To be comparable, these data must be adjusted for population density and topic popularity. Measures of a discussion should also be scaled to the level of activity of the discussion. Adjusting for topic popularity is the virtual counterpart to adjusting for population density. For example, 20% recreational usage in a region is significant if the majority opinion on Twitter on topics is around 30%, but insubstantial if the majority opinion is around 80%.
+A Ruby project to identify what features of tweets are useful for distinguishing discussions on the medical use of marijuana from the those on the recreational use of marijuana
+
+## Installation
+
+* currently working on creating a gem to handle installation.
+* requires
+ * Access token, token secret, consumer key, consumer token may be acquired from Twitter developer site.
+ * ```sh gem install spreadsheet```
+   * https://github.com/zdavatz/spreadsheet
+ * ```sh gem install lemmatizer```
+   * https://github.com/yohasebe/lemmatizer
+ * ```sh gem install twitter```
+   * https://github.com/sferik/twitter
+
+## Testing
+
+```sh
+ruby tweetCatcher.rb
+```
+* returns a spreadsheet of 6,500 most recent tweets found using a query string marijuana.
+
+```sh
+ruby removeWords.rb
+```
+* takes the spreadsheet created from 'tweetCatcher.rb' and returns a new spreadsheet with strings lemmatized and stopwords removed.
+
+## Examples
+
+  n/a
+
+## Apps Wiki
+
+* https://github.com/viviboox3/toxTweet/wiki
