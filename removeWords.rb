@@ -1,22 +1,32 @@
 require 'lemmatizer'
 require 'spreadsheet'
 
+$global_counter = 1
 
 lem = Lemmatizer.new
 common = {}
 
-book = Spreadsheet.open 'marijuana_tweets.xls'
-sheet = book.worksheet 0
+originalBook = Spreadsheet.open 'marijuana_tweets.xls'
+originalSheet = originalBook.worksheet 0
 
-sheet.each do |row|
+modifiedBook = Spreadsheet::Workbook.new
+modifiedSheet = modifiedBook.create_worksheet
+
+originalSheet.each do |ori_row|
   newStr = ""
 
   %w{ a and or to the is in be rt}.each{|w| common[w] = true}
-  row[0].split(" ").each do |word|
+  ori_row[0].split(" ").each do |word|
     newStr += lem.lemma(word) + " "
   end
-  puts newStr.gsub(/\b\w+\b/){|word| common[word.downcase] ? '':word}.squeeze(' ')
+  newStr = newStr.downcase
+  newStr = newStr.gsub(/\b\w+\b/){|word| common[word.downcase] ? '':word}.squeeze(' ')
+  newStr = newStr.gsub(/\b(@\w*)\b/, '')
+  newStr = newStr.gsub(/[^a-z\s]/,'')
+  puts newStr
+  modifiedSheet.row($global_counter).push(newStr)
+  $global_counter += 1
 
 end
 
-book.write 'modified_mari_tweets.xls'
+modifiedBook.write 'modified_mari_tweets.xls'
