@@ -1,4 +1,4 @@
-ToxTweet
+# ToxTweet
 
 ## Description
 
@@ -9,11 +9,11 @@ A Ruby project to identify what features of tweets are useful for distinguishing
 * currently working on creating a gem to handle installation.
 * requires
  * Access token, token secret, consumer key, consumer token may be acquired from Twitter developer site.
- * ```sh gem install spreadsheet```
+ * ```gem install spreadsheet```
    * https://github.com/zdavatz/spreadsheet
- * ```sh gem install lemmatizer```
+ * ```gem install lemmatizer```
    * https://github.com/yohasebe/lemmatizer
- * ```sh gem install twitter```
+ * ```gem install twitter```
    * https://github.com/sferik/twitter
 
 ## Testing
